@@ -1,5 +1,6 @@
 package eu.neurovertex.multiagent;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -15,7 +16,7 @@ public interface Grid {
 
 	Optional<Element> get(int x, int y);
 
-	void set(Position pos, Optional<Element> element);
+	List<GridElement> getAgents();
 
 	interface Element {}
 
