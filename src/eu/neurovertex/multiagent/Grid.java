@@ -16,7 +16,7 @@ public interface Grid {
 
 	Optional<Element> get(int x, int y);
 
-	List<GridElement> getAgents();
+	List<GridAgent> getAgents();
 
 	interface Element {}
 

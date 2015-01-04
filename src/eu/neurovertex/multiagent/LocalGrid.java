@@ -25,6 +25,10 @@ public class LocalGrid implements Grid {
 		this.area = area;
 	}
 
+	public LocalGrid(GlobalGrid global, int xoff, int yoff, Direction rotation, int radius) {
+		this(global, xoff, yoff, rotation, (i, j) -> (Math.hypot(i, j)) < radius + 0.5);
+	}
+
 	@Override
 	public Optional<Element> get(int x, int y) {
 		if (!valid)
@@ -36,8 +40,8 @@ public class LocalGrid implements Grid {
 	}
 
 	@Override
-	public List<GridElement> getAgents() {
-		return global.getAgents().stream().map(a -> new GridElement(this, getLocal(a.getPosition()), a.getElement()))
+	public List<GridAgent> getAgents() {
+		return global.getAgents().stream().map(a -> new GridAgent(this, getLocal(a.getPosition()), a.getAgent()))
 				.filter(a -> test(a.getPosition())).collect(Collectors.toList());
 	}
 

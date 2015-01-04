@@ -34,6 +34,16 @@ public class Position {
 		return y;
 	}
 
+	public Position forward(Cardinal direction, int distance) {
+		Direction dir = Direction.values()[direction.ordinal()];
+		int dx = dir.rotateX(distance, 0), dy = dir.rotateY(distance, 0);
+		return new Position(getX() + dx, getY() + dy);
+	}
+
+	public Position forward(int distance) {
+		return forward(direction.get(), distance);
+	}
+
 	public Optional<Cardinal> getDirection() {
 		return direction;
 	}

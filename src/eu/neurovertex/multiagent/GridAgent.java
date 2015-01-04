@@ -6,12 +6,12 @@ package eu.neurovertex.multiagent;
  *         Date: 19/12/14
  *         Time: 20:25
  */
-public class GridElement implements Grid.Element {
+public class GridAgent implements Grid.Element {
 	private final Grid grid;
 	private final Position position;
-	private final Grid.Element element;
+	private final Agent element;
 
-	public GridElement(Grid grid, Position position, Grid.Element element) {
+	public GridAgent(Grid grid, Position position, Agent element) {
 		this.grid = grid;
 		this.position = position;
 		this.element = element;
@@ -21,7 +21,7 @@ public class GridElement implements Grid.Element {
 		return position;
 	}
 
-	public Grid.Element getElement() {
+	public Agent getAgent() {
 		return element;
 	}
 

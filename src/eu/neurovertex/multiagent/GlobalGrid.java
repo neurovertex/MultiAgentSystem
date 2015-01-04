@@ -1,6 +1,9 @@
 package eu.neurovertex.multiagent;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -9,26 +12,46 @@ import java.util.stream.Collectors;
  *         Time: 20:22
  */
 public class GlobalGrid implements Grid {
-	private final Map<Position, Element> map;
+	private final Element[][] map;
+	private final Map<Agent, Position> agents = new HashMap<>();
 	private final int width, height;
 
 	public GlobalGrid(int width, int height) {
 		this.width = width;
 		this.height = height;
-		map = new HashMap<>();
+		map = new Element[width][height];
 	}
 
 
 	@Override
 	public Optional<Element> get(int x, int y) {
-		return (x >= 0 && x < width && y >= 0 && y < height) ?
-				Optional.ofNullable(map.get(new Position(x, y))) : Optional.of(StaticElement.UNKNOWN);
+		try {
+			return Optional.ofNullable(map[x][y]);
+		} catch (NullPointerException ex) {
+			return Optional.ofNullable(StaticElement.UNKNOWN);
+		}
 	}
 
 	@Override
-	public List<GridElement> getAgents() {
-		return map.entrySet().stream().filter(entry -> entry.getValue() instanceof Agent)
-				.map(entry -> new GridElement(this, entry.getKey(), entry.getValue())).collect(Collectors.toList());
+	public List<GridAgent> getAgents() {
+		return agents.entrySet().stream().map(e -> new GridAgent(this, e.getValue(), e.getKey()))
+				.collect(Collectors.toList());
+	}
+
+	public void addAgent(Agent a, Position pos) {
+		if (agents.containsKey(a))
+			throw new IllegalArgumentException("Agent already in collection");
+		agents.put(a, pos);
+	}
+
+	public void moveAgent(Agent a, Position pos) {
+		if (!agents.containsKey(a))
+			throw new IllegalArgumentException("Agent not in collection");
+		agents.put(a, pos);
+	}
+
+	public void removeAgent(Agent a) {
+		agents.remove(a);
 	}
 
 	public int getWidth() {
@@ -40,6 +63,6 @@ public class GlobalGrid implements Grid {
 	}
 
 	public void set(Position pos, Optional<Element> element) {
-		element.map(e -> map.put(pos, e)).orElse(map.remove(pos));
+		map[pos.getX()][pos.getY()] = element.orElse(null);
 	}
 }
