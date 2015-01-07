@@ -36,7 +36,7 @@ public class Simulator implements Runnable {
 			Cardinal newDir = pos.getDirection().get().rotate(decision.getRotation());
 			Position newPos = new Position(pos.getX(), pos.getY(), newDir);
 			agent.getAgent().rotate(decision.getRotation());
-			if (decision.getMove() && grid.get(newPos.forward(1)).isPresent()) {
+			if (decision.getMove() && grid.get(newPos.forward(1)) == Grid.StaticElement.EMPTY) {
 				newPos = newPos.forward(1);
 				agent.getAgent().moveForward();
 			}

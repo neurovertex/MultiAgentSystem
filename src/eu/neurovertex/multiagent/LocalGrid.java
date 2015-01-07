@@ -1,9 +1,10 @@
 package eu.neurovertex.multiagent;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
+
+import static eu.neurovertex.multiagent.Grid.StaticElement.UNKNOWN;
 
 /**
  * @author Neurovertex
@@ -30,13 +31,13 @@ public class LocalGrid implements Grid {
 	}
 
 	@Override
-	public Optional<Element> get(int x, int y) {
+	public Element get(int x, int y) {
 		if (!valid)
 			throw new IllegalStateException("Grid was invalidated");
 		if (area.test(x, y))
 			return getGlobal(x, y);
 		else
-			return Optional.of(StaticElement.UNKNOWN);
+			return UNKNOWN;
 	}
 
 	@Override
@@ -49,11 +50,11 @@ public class LocalGrid implements Grid {
 		return area.test(x, y);
 	}
 
-	private Optional<Element> getGlobal(int x, int y) {
+	private Element getGlobal(int x, int y) {
 		x = rotation.rotateX(x, y) + xoff;
 		y = rotation.rotateY(x, y) + yoff;
 		return (x >= 0 && x < global.getWidth() && y >= 0 && y < global.getHeight()) ?
-					global.get(x, y) : Optional.of(StaticElement.UNKNOWN);
+				global.get(x, y) : UNKNOWN;
 	}
 
 	private boolean test(Position p) {

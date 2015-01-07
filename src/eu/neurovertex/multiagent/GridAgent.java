@@ -6,7 +6,7 @@ package eu.neurovertex.multiagent;
  *         Date: 19/12/14
  *         Time: 20:25
  */
-public class GridAgent implements Grid.Element {
+public class GridAgent {
 	private final Grid grid;
 	private final Position position;
 	private final Agent element;
