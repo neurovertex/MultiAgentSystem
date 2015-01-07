@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
+import java.util.*;
 
 import static eu.neurovertex.multiagent.Grid.StaticElement.AGENT;
 import static eu.neurovertex.multiagent.Grid.StaticElement.EMPTY;
@@ -76,6 +77,13 @@ public class GlobalGrid implements Grid {
 		return height;
 	}
 
+<<<<<<< HEAD
+=======
+	public Element[][] getMap() {
+		return map;
+	}
+
+>>>>>>> Modification de la hashmap Element en tableaux et mise a jour de la fonction clone en conséquence
 	public EventHandler<? super CellChanged> getOnCellChanged() {
 		return onCellChanged;
 	}
@@ -91,12 +99,18 @@ public class GlobalGrid implements Grid {
 	public GlobalGrid clone() {
 		GlobalGrid other = new GlobalGrid(this.width, this.height);
 
-		Iterator it = other.getMap().entrySet().iterator();
+		Iterator it = other.getAgents().iterator();
 		while(it.hasNext()) {
 			Map.Entry pairs = (Map.Entry) it.next();
-			Position key = (Position) pairs.getKey();
-			Element value = (Element) pairs.getValue();
-			other.getMap().put(key, value);
+			Agent key = (Agent) pairs.getKey();
+			Position value = (Position) pairs.getValue();
+			other.addAgent(key, value);
+		}
+
+		for (int i = 0; i < width; i++) {
+			for (int j = 0; j < height; j++) {
+				other.getMap()[i][j] = map[i][j];
+			}
 		}
 
 		return other;
