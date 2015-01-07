@@ -14,6 +14,9 @@ import java.util.ArrayList;
 import java.util.Observable;
 import java.util.ResourceBundle;
 
+/**
+ * Created by benji on 02/01/15.
+ */
 public class GameController implements EventHandler<GlobalGrid.CellChanged>, Initializable {
     private static String DEAD_COLOR = "#334455";
     private static String LIVE_COLOR = "#FFFF7F";
