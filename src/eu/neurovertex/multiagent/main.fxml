@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane fx:id="root" prefHeight="800.0" prefWidth="1400" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="eu.neurovertex.multiagent.MainController">
+    <top>
+        <HBox fx:id="controlBar" alignment="CENTER" spacing="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <children>
+                <Label text="Pas temps :" />
+                <TextField fx:id="timeStepText" prefHeight="25.0" prefWidth="50.0" text="3" />
+                <Label text="ms">
+                    <HBox.margin>
+                        <Insets left="-5.0" />
+                    </HBox.margin>
+                </Label>
+                <Separator orientation="VERTICAL" />
+                <Label text="Itérations :" />
+                <TextField fx:id="iterationsText" prefHeight="25.0" prefWidth="100.0" text="1000000" />
+                <Button fx:id="go" mnemonicParsing="false" onAction="#onGoClick" text="Go" />
+                <Separator orientation="VERTICAL" />
+                <Label text="Courante :" />
+                <Label fx:id="currentIterationLabel" text="0 / 0" />
+                <Button fx:id="previous" mnemonicParsing="false" onAction="#onPrevClick" text="«" />
+                <Button fx:id="next" mnemonicParsing="false" onAction="#onNextClick" text="»" />
+                <Separator orientation="VERTICAL" />
+                <Label text="Nouvelle grille :" />
+                <Button onAction="#onEmptyClick" text="Vide" />
+                <Button onAction="#onRandomClick" text="Aléatoire" />
+                <Button onAction="#onCurrentClick" text="Actuelle" /><Separator orientation="VERTICAL" />
+                <CheckBox fx:id="startRunAuto" mnemonicParsing="false" text="Lancement automatique" />
+                <Label text="Probabilité" />
+                <TextField fx:id="probabilityText" prefHeight="25.0" prefWidth="50.0" text="0.5" /><Separator orientation="VERTICAL" /><ComboBox fx:id="gridChoice" onAction="#onApplyGridChoice" prefWidth="150.0" promptText="Remplissage" />
+            </children>
+        </HBox>
+    </top>
+    <padding>
+        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+    </padding>
+    <center>
+        <fx:include fx:id="game" source="gui.fxml" />
+    </center>
+</BorderPane>
