@@ -55,11 +55,12 @@ public class GlobalGrid implements Grid {
 		Position old = agents.get(a);
 		grid[old.getX()][old.getY()] = EMPTY;
 		agents.put(a, pos);
-		grid[pos.getX()][pos.getY()] = EMPTY;
+		grid[pos.getX()][pos.getY()] = AGENT;
 	}
 
 	public void removeAgent(Agent a) {
-		agents.remove(a);
+		Position pos = agents.remove(a);
+		grid[pos.getX()][pos.getY()] = EMPTY;
 	}
 
 	public int getWidth() {
