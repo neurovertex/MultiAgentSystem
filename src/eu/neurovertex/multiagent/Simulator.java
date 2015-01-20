@@ -12,9 +12,12 @@ import java.util.Map;
 public class Simulator implements Runnable {
 	private final GlobalGrid grid;
 
-
 	public Simulator(GlobalGrid grid) {
 		this.grid = grid;
+	}
+
+	public GlobalGrid getGrid() {
+		return grid;
 	}
 
 	public void iterate() {

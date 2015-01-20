@@ -33,9 +33,25 @@ public class GlobalGrid implements Grid {
 			Arrays.fill(line, EMPTY);
 	}
 
+	public Position getPosAgent(Agent a) {
+		return agents.get(a);
+	}
+
+	public ArrayList<String> getStaticElements() {
+		ArrayList<String> elements = new ArrayList<String>();
+		for (int i = 0; i < StaticElement.values().length; i++) {
+			elements.add(StaticElement.values()[i].name());
+		}
+		return elements;
+	}
+
 	@Override
 	public Element get(int x, int y) {
 		return grid[x][y];
+	}
+
+	public void set(int x, int y, Element e) {
+		grid[x][y] = e;
 	}
 
 	@Override
@@ -77,13 +93,6 @@ public class GlobalGrid implements Grid {
 		return height;
 	}
 
-<<<<<<< HEAD
-=======
-	public Element[][] getMap() {
-		return map;
-	}
-
->>>>>>> Modification de la hashmap Element en tableaux et mise a jour de la fonction clone en conséquence
 	public EventHandler<? super CellChanged> getOnCellChanged() {
 		return onCellChanged;
 	}
@@ -92,50 +101,10 @@ public class GlobalGrid implements Grid {
 		this.onCellChanged = onCellChanged;
 	}
 
-	public void set(Position pos, Optional<Element> element) {
-		element.map(e -> map.put(pos, e)).orElse(map.remove(pos));
-	}
-
-	public GlobalGrid clone() {
-		GlobalGrid other = new GlobalGrid(this.width, this.height);
-
-		Iterator it = other.getAgents().iterator();
-		while(it.hasNext()) {
-			Map.Entry pairs = (Map.Entry) it.next();
-			Agent key = (Agent) pairs.getKey();
-			Position value = (Position) pairs.getValue();
-			other.addAgent(key, value);
-		}
-
-		for (int i = 0; i < width; i++) {
-			for (int j = 0; j < height; j++) {
-				other.getMap()[i][j] = map[i][j];
-			}
-		}
-
-		return other;
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-
-		GlobalGrid that = (GlobalGrid) o;
-
-		if (height != that.height) return false;
-		if (width != that.width) return false;
-		if (map != null ? !map.equals(that.map) : that.map != null) return false;
-
-		return true;
-	}
-
-	@Override
-	public int hashCode() {
-		int result = map != null ? map.hashCode() : 0;
-		result = 31 * result + width;
-		result = 31 * result + height;
-		return result;
+	public void set(Position pos, Element element) {
+		if (element == null)
+			throw new IllegalArgumentException("Can't pass null element to set()");
+		grid[pos.getX()][pos.getY()] = element;
 	}
 
 	public static class CellChanged extends Event {

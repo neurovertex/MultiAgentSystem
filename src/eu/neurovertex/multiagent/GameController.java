@@ -10,16 +10,18 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.layout.*;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Observable;
-import java.util.ResourceBundle;
+import java.util.*;
 
 /**
  * Created by benji on 02/01/15.
  */
 public class GameController implements EventHandler<GlobalGrid.CellChanged>, Initializable {
-    private static String DEAD_COLOR = "#334455";
-    private static String LIVE_COLOR = "#FFFF7F";
+    private static String EMPTY_COLOR = "#FFFFEE";//"#334455";
+    private static String UNKNOW_COLOR = "#889977";//"#FFFF7F";
+    private static String OBSTACLE_COLOR = "#334455";
+    private static String AGENT_COLOR = "#FFBB11";//"#FFFF7F";
+    private static String SELECTED_COLOR = "#5599FF";//"#FFFF7F";
+    private static String EXPLORED_COLOR = "#D8D8D8";
 
     @FXML
     private Pane rootPane;
@@ -30,7 +32,9 @@ public class GameController implements EventHandler<GlobalGrid.CellChanged>, Ini
     private boolean editable = true;
     private GlobalGrid grid;
     //private ObservableList<Pane> selectedList = FXCollections.observableList();
-    private ArrayList<Pane> selectedList;
+    private HashMap<Pane, int[]> selectedList;
+
+    private Simulator simulateur;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -45,7 +49,7 @@ public class GameController implements EventHandler<GlobalGrid.CellChanged>, Ini
 
         rootPane.widthProperty().addListener(listener);
         rootPane.heightProperty().addListener(listener);
-
+        simulateur = new Simulator(grid);
     }
 
     @Override
@@ -54,11 +58,18 @@ public class GameController implements EventHandler<GlobalGrid.CellChanged>, Ini
     }
 
     public void play() {
+        for (GridAgent a: grid.getAgents()) {
+            panes[grid.getPosAgent(a.getAgent()).getX()][grid.getPosAgent(a.getAgent()).getY()].setStyle("-fx-background-color: " + EMPTY_COLOR);
+        }
+        simulateur.run();
+        for (GridAgent a: grid.getAgents()) {
+            panes[grid.getPosAgent(a.getAgent()).getX()][grid.getPosAgent(a.getAgent()).getY()].setStyle("-fx-background-color: " + AGENT_COLOR);
+        }
     }
 
     private void updateCell(int x, int y) {
         //panes[x][y].setStyle("-fx-background-color: " + (grid.isLive(x, y) ? LIVE_COLOR : DEAD_COLOR));
-        panes[x][y].setStyle("-fx-background-color: " + DEAD_COLOR);
+        panes[x][y].setStyle("-fx-background-color: " + EMPTY_COLOR);
     }
 
     public boolean getEditable() {
@@ -73,8 +84,29 @@ public class GameController implements EventHandler<GlobalGrid.CellChanged>, Ini
         return grid;
     }
 
-    public void applyGridChoice(Object selectedItem) {
-
+    public void applyGridChoice(String selectedItem) {
+        //for (Pane paneSelected:selectedList) {
+        for (Pane paneSelected: selectedList.keySet()) {
+            switch (selectedItem){
+                case "EMPTY":
+                    paneSelected.setStyle("-fx-background-color: " + EMPTY_COLOR);
+                    break;
+                case "UNKNOW":
+                    paneSelected.setStyle("-fx-background-color: " + UNKNOW_COLOR);
+                    break;
+                case "OBSTACLE":
+                    paneSelected.setStyle("-fx-background-color: " + OBSTACLE_COLOR);
+                    grid.set(selectedList.get(paneSelected)[0],selectedList.get(paneSelected)[1],Grid.StaticElement.OBSTACLE);
+                    break;
+                case "AGENT":
+                    paneSelected.setStyle("-fx-background-color: " + AGENT_COLOR);
+                    Agent a = new AgentRobot();
+                    Position p = new Position(selectedList.get(paneSelected)[0],selectedList.get(paneSelected)[1]);
+                    grid.addAgent(a,p);
+                    break;
+            }
+        }
+        this.selectedList.clear();
     }
 
     public void setGrid(GlobalGrid grid) {
@@ -84,7 +116,7 @@ public class GameController implements EventHandler<GlobalGrid.CellChanged>, Ini
         this.grid = grid;
 
         this.panes = new Pane[grid.getWidth()][grid.getHeight()];
-        this.selectedList = new ArrayList<Pane>();
+        this.selectedList = new HashMap<Pane, int[]>();
 
         gridPane.getChildren().clear();
         gridPane.getColumnConstraints().clear();
@@ -108,15 +140,18 @@ public class GameController implements EventHandler<GlobalGrid.CellChanged>, Ini
                 panes[x][y] = new Pane();
                 panes[x][y].setOnMouseClicked((e) -> {
                     if (getEditable()) {
-                        if(!selectedList.contains(panes[xx][yy])) {
-                            panes[xx][yy].setStyle("-fx-background-color: " + LIVE_COLOR);
-                            selectedList.add(panes[xx][yy]);
+                        if (panes[xx][yy].getStyle().equals("-fx-background-color: #FFFFEE")) {
+                            if (!selectedList.containsValue(panes[xx][yy])) {//!selectedList.contains(panes[xx][yy])) {
+                                panes[xx][yy].setStyle("-fx-background-color: " + SELECTED_COLOR);
+                                int[] tab = {xx,yy};
+                                selectedList.put(panes[xx][yy],tab);
+                            }
+                            else {
+                                panes[xx][yy].setStyle("-fx-background-color: " + EMPTY_COLOR);
+                                int[] tabR = {xx,yy};
+                                selectedList.remove(tabR);
+                            }
                         }
-                        else {
-                            panes[xx][yy].setStyle("-fx-background-color: " + DEAD_COLOR);
-                            selectedList.remove(selectedList.indexOf(panes[xx][yy]));
-                        }
-                        //grid.setLive(xx, yy, !grid.isLive(xx, yy));
                     }
                 });
 

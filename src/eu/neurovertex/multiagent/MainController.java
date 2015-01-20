@@ -1,13 +1,14 @@
 package eu.neurovertex.multiagent;
 
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 /**
@@ -23,8 +24,6 @@ public class MainController implements Initializable {
     @FXML
     private TextField timeStepText;
     @FXML
-    private TextField iterationsText;
-    @FXML
     private Label currentIterationLabel;
     @FXML
     private Button go;
@@ -35,10 +34,7 @@ public class MainController implements Initializable {
     @FXML
     private ComboBox gridChoice;
 
-    private ArrayList<GlobalGrid> history = new ArrayList<>();
-
     private int animationCount;
-    private int currentIteration;
     private Task<Void> task;
 
     @Override
@@ -49,22 +45,19 @@ public class MainController implements Initializable {
     public void emptyGrid() {
         GlobalGrid grid = new GlobalGrid(NB_X_CELLS, NB_Y_CELLS);
         gameController.setGrid(grid);
+        ObservableList<String> elements = FXCollections.observableArrayList(grid.getStaticElements());
+        gridChoice.setItems(elements);
         restart();
     }
 
     private void restart() {
         if (task != null)
             task.cancel();
-
-        history.clear();
-        history.add(gameController.getGrid());
-        currentIteration = 0;
         updateStatus();
     }
 
     private void updateView() {
         updateStatus();
-        gameController.setGrid(history.get(currentIteration).clone());
     }
 
     void updateStatus() {
@@ -75,11 +68,7 @@ public class MainController implements Initializable {
 
     @FXML
     private void onGoClick() {
-        final int iterations = Integer.parseInt(iterationsText.getText());
         final int timeStep = Integer.parseInt(timeStepText.getText());
-
-        if (currentIteration == 0)
-            history.set(0, gameController.getGrid().clone());
 
         animationCount = 0;
         updateStatus();
@@ -90,27 +79,16 @@ public class MainController implements Initializable {
             protected Void call() throws Exception {
                 while (!isCancelled()) {
                     Platform.runLater(() -> {
-                        if (animationCount >= iterations || isCancelled()) {
+                        if (isCancelled()) {
                             return;
                         }
                         gameController.play();
 
-                        GlobalGrid newGrid = gameController.getGrid().clone();
-
-                        int oldIndex = history.indexOf(newGrid);
-
-                        if (oldIndex == -1) {
+                        if (1 == 1) { //IL FAUDRA PENSER A METTRE LA CONDITION D'ARRET DE L'EXPLORATION ICI !!!
                             animationCount++;
-                            currentIteration++;
 
-                            history.add(newGrid);
-
-                            if (animationCount >= iterations) {
-                                cancel();
-                            }
                         } else {
                             cancel();
-                            currentIteration = oldIndex;
                             updateView();
                         }
 
@@ -125,32 +103,6 @@ public class MainController implements Initializable {
         Thread t = new Thread(task);
         t.setDaemon(true);
         t.start();
-    }
-
-    @FXML
-    private void onPrevClick() {
-        if (currentIteration >= 0) {
-            currentIteration--;
-            if (currentIteration < 0) {
-                currentIteration = history.size() - 1;
-            }
-            updateView();
-        }
-    }
-
-    @FXML
-    private void onNextClick() {
-        if (currentIteration <= (history.size() - 1)) {
-            currentIteration++;
-            if (currentIteration == history.size()) {
-                currentIteration = 0;
-            }
-            updateView();
-        }
-        if (currentIteration == history.size()) {
-            currentIteration = 0;
-            updateView();
-        }
     }
 
     @FXML
@@ -181,6 +133,6 @@ public class MainController implements Initializable {
 
     @FXML
     private void onApplyGridChoice(){
-        gameController.applyGridChoice(gridChoice.getSelectionModel().getSelectedItem());
+        gameController.applyGridChoice(gridChoice.getSelectionModel().getSelectedItem().toString());
     }
 }
